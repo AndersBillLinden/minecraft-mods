@@ -1,0 +1,4 @@
+{
+    "magic_wand": {"sounds": ["magic_wand"]},
+    "magic_wand_break": {"sounds": ["magic_wand_break"]}
+}

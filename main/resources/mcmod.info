@@ -1,10 +1,14 @@
 [
 {
+  "modid": "magicwandmod",
+  "name": "Magic Wand Mod",
+  "description": "This mod adds a magic wand item.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["AndersBillLinden"],
+  "credits": "The Forge and FML guys, gigaherz, diesieben07",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
