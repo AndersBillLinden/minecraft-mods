@@ -1,0 +1,12 @@
+[
+{
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["AndersBillLinden"],
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
