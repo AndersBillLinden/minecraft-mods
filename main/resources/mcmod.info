@@ -1,10 +1,14 @@
 [
 {
+  "modid": "irongolemfarmmod",
+  "name": "Iron Golem Farm Mod",
+  "description": "This mod adds an iron golem farm.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["AndersBillLinden"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
