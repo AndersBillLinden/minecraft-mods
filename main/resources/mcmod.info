@@ -1,10 +1,14 @@
 [
 {
+  "modid": "uppercuttermod",
+  "name": "Upper Cutter Mod",
+  "description": "This mod adds an uppercutter that lets you fill a block and every block above that with air.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["AndersBillLinden"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
