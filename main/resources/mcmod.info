@@ -1,10 +1,14 @@
 [
 {
+  "modid": "extracommandsmod",
+  "name": "Extra commands Mod",
+  "description": "This mod adds 35 commands.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["AndersBillLinden"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
