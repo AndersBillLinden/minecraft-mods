@@ -1,10 +1,14 @@
 [
 {
+  "modid": "glassupfillermod",
+  "name": "Glass Up Filler Mod",
+  "description": "This mod adds a glass up filler that lets you fill a block and every block above it up to the height map with glass.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["AndersBillLinden"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
