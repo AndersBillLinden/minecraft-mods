@@ -1,22 +1,20 @@
 package items;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockTorch;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.BlockPos.MutableBlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class IronGolemFarmKit extends Item
@@ -31,7 +29,7 @@ public class IronGolemFarmKit extends Item
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {        
         if (!world.isRemote)
         {
@@ -46,7 +44,7 @@ public class IronGolemFarmKit extends Item
             int northVector = north ? 1 : -1;
             int eastVector = east ? 1 : -1;
             
-            IBlockState stoneBrick = Blocks.stonebrick.getDefaultState();
+            IBlockState stoneBrick = Blocks.STONEBRICK.getDefaultState();
             
             BlockPos corner1 = pos.up();
             BlockPos corner2 = corner1.east(19 * eastVector);
@@ -68,11 +66,11 @@ public class IronGolemFarmKit extends Item
             
             buildStage(world, corner1.up(heightToFirstFloor - 1), stoneBrick, northVector, eastVector);
             
-            world.playSoundAtEntity(player, "random.explode", 1, 1);
+            world.playSound(null, player.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
             
             stack.stackSize--;
         }
-        return true;
+        return EnumActionResult.SUCCESS;
     }
 
     private void buildStage(World world, BlockPos corner1, IBlockState stoneBrick, int northVector, int eastVector)
@@ -98,7 +96,7 @@ public class IronGolemFarmKit extends Item
 
     private void addWater(World world, int northVector, int eastVector, int x, int y, int z)
     {
-        IBlockState water = Blocks.water.getDefaultState();
+        IBlockState water = Blocks.WATER.getDefaultState();
 
         BlockPos p1 = new BlockPos(x + eastVector, y + 2, z - northVector);
         world.setBlockState(p1, water);
@@ -130,8 +128,8 @@ public class IronGolemFarmKit extends Item
 
     private void buildPockets(World world, int northVector, int eastVector, int x, int y, int z)
     {
-        IBlockState stoneBrick = Blocks.stonebrick.getDefaultState();
-        IBlockState water = Blocks.water.getDefaultState();
+        IBlockState stoneBrick = Blocks.STONEBRICK.getDefaultState();
+        IBlockState water = Blocks.WATER.getDefaultState();
         
         for (int yd = 0; yd < 4; yd++)
         {
@@ -190,7 +188,7 @@ public class IronGolemFarmKit extends Item
     
     private void buildTorches(World world, int northVector, int eastVector, int x, int y, int z)
     {
-        IBlockState torch = Blocks.torch.getDefaultState();
+        IBlockState torch = Blocks.TORCH.getDefaultState();
         IBlockState northFacingTorch
             = torch.withProperty(BlockTorch.FACING, EnumFacing.NORTH);
 
@@ -232,7 +230,7 @@ public class IronGolemFarmKit extends Item
 
     private void buildDoors(World world, int northVector, int eastVector, int x, int y, int z)
     {
-        IBlockState door = Blocks.acacia_door.getDefaultState();
+        IBlockState door = Blocks.ACACIA_DOOR.getDefaultState();
         IBlockState northFacingDoor
             = door.withProperty(BlockDoor.FACING, EnumFacing.NORTH);
 
@@ -255,10 +253,10 @@ public class IronGolemFarmKit extends Item
             if (xi < 7 || (xi > 7 && xi < 12) || xi > 12)
             {
                 BlockPos p1 = new BlockPos(xb, y, zb1);
-                ItemDoor.placeDoor(world, p1, facing1, Blocks.acacia_door);
+                ItemDoor.placeDoor(world, p1, facing1, Blocks.ACACIA_DOOR, true);
                 
                 BlockPos p2 = new BlockPos(xb, y, zb2);
-                ItemDoor.placeDoor(world, p2, facing2, Blocks.acacia_door);
+                ItemDoor.placeDoor(world, p2, facing2, Blocks.ACACIA_DOOR, true);
             }
         }
     
@@ -271,10 +269,10 @@ public class IronGolemFarmKit extends Item
             if (zi < 7 || (zi > 7 && zi < 12) || zi > 12)
             {            
                 BlockPos p1 = new BlockPos(xb1, y, zb);
-                ItemDoor.placeDoor(world, p1, facing3, Blocks.acacia_door);
+                ItemDoor.placeDoor(world, p1, facing3, Blocks.ACACIA_DOOR, true);
                 
                 BlockPos p2 = new BlockPos(xb2, y, zb);
-                ItemDoor.placeDoor(world, p2, facing4, Blocks.acacia_door);
+                ItemDoor.placeDoor(world, p2, facing4, Blocks.ACACIA_DOOR, true);
             }
         }
     }
@@ -359,7 +357,7 @@ public class IronGolemFarmKit extends Item
         for (int y = p.getY() - 1; y > 0; y--)
         {
             BlockPos p2 = new BlockPos(x, y, z);
-            if (!world.isAirBlock(p2) && !world.getBlockState(p2).getBlock().getMaterial().isLiquid())
+            if (!world.isAirBlock(p2) && !world.getBlockState(p2).getBlock().getMaterial(s).isLiquid())
                 break;
 
             world.setBlockState(p2, s);

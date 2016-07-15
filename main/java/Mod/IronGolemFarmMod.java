@@ -33,7 +33,7 @@ public class IronGolemFarmMod
     {
         GameRegistry.registerItem(ironGolemFarmKit = new IronGolemFarmKit(), IronGolemFarmKit.NAME);
 
-        GameRegistry.addRecipe(new ItemStack(ironGolemFarmKit), "***", "///", "///", '*', Items.iron_ingot, '/', Items.stick);
+        GameRegistry.addRecipe(new ItemStack(ironGolemFarmKit), "***", "///", "///", '*', Items.IRON_INGOT, '/', Items.STICK);
 
         proxy.preInit(event);
     }
