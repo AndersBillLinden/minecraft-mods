@@ -1,4 +1,3 @@
 {
-    "magic_wand": {"sounds": ["magic_wand"]},
-    "magic_wand_break": {"sounds": ["magic_wand_break"]}
+    "magic_wand": {	"category": "master", "sounds": [ "magicwandmod:magic_wand" ]}
 }

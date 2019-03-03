@@ -1,32 +1,35 @@
 package items;
 
-import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
+import java.util.concurrent.Callable;
+
+import capabilities.CapabilityProvider;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.common.IExtendedEntityProperties;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import Mod.MagicWandMod;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.Capability.IStorage;
+import sounds.Sounds;
 
 public class MagicWand extends Item
 {
@@ -35,22 +38,23 @@ public class MagicWand extends Item
     public MagicWand()
     {
         setMaxStackSize(1);
+        setRegistryName(NAME);
         setUnlocalizedName(NAME);
-
-        setMaxDamage(100);
+        setCreativeTab(CreativeTabs.TOOLS);
+        setMaxDamage(20);
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing,
+            float hitX, float hitY, float hitZ)
     {
         if (!world.isRemote)
         {
-            MagicWandPlayer p = MagicWandPlayer.get(player);
-
+            ItemStack stack = player.getHeldItem(hand);            
+            IMagicWandPlayer p = player.getCapability(CapabilityProvider.WAND_CAPABILITY, null);
+            
             boolean completedSpell = false;
             boolean failedSpell = false;
-
-            Block blockType = world.getBlockState(pos).getBlock();
 
             p.addUsePosition(pos);
 
@@ -62,9 +66,10 @@ public class MagicWand extends Item
                     {
                         // 4 3 2
                         // 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.dirt, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.DIRT, 64), player);
                             msg(player, "Added stack of dirt to inventory");
                             completedSpell = true;
                         }
@@ -78,7 +83,8 @@ public class MagicWand extends Item
                     {
                         // 4
                         // 3 2
-                        // 1
+                        //   1
+
                         toggleRain(world);
                         msg(player, "Toggled rain");
                         completedSpell = true;
@@ -87,9 +93,10 @@ public class MagicWand extends Item
                     {
                         // 3 2
                         // 4 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Items.carrot, 64), player);
+                            addStackToInventory(new ItemStack(Items.CARROT, 64), player);
                             msg(player, "Added stack of carrots to inventory");
                             completedSpell = true;
                         }
@@ -104,9 +111,10 @@ public class MagicWand extends Item
                         // 4
                         // 3 2
                         // 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.obsidian, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.OBSIDIAN, 64), player);
                             msg(player, "Added stack of obsidian to inventory");
                             completedSpell = true;
                         }
@@ -119,8 +127,9 @@ public class MagicWand extends Item
                     else if (p.isRightBend(0, 1, 3))
                     {
                         // 3 2 4
-                        // 1
-                        if (world.provider.getDimensionId() != 0)
+                        //   1
+
+                        if (world.provider.getDimension() != 0)
                         {
                             msg(player, "Spell must be performed in overworld!");
                             failedSpell = true;
@@ -146,7 +155,8 @@ public class MagicWand extends Item
 
                             if (maxHeightPos != null)
                             {
-                                player.setPositionAndUpdate(maxHeightPos.getX() + 0.5D, maxHeightPos.getY(), maxHeightPos.getZ() + 0.5D);
+                                player.setPositionAndUpdate(maxHeightPos.getX() + 0.5D, maxHeightPos.getY(),
+                                        maxHeightPos.getZ() + 0.5D);
                                 msg(player, "Changing to highest location in 7x7 area");
                                 pos = maxHeightPos;
                                 completedSpell = true;
@@ -165,9 +175,10 @@ public class MagicWand extends Item
                     {
                         // 2 3 4
                         // 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.cobblestone, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.COBBLESTONE, 64), player);
                             msg(player, "Added stack of cobble stone to inventory");
                             completedSpell = true;
                         }
@@ -179,9 +190,10 @@ public class MagicWand extends Item
                     }
                     else if (p.isLeftBend(1, 2, 3))
                     {
-                        //   4
+                        // 4
                         // 2 3
                         // 1
+
                         add12Hours(world);
                         msg(player, "Added 12 hours");
                         completedSpell = true;
@@ -192,7 +204,7 @@ public class MagicWand extends Item
                         // 1 4
                         try
                         {
-                            addStackToInventory(new ItemStack(Items.diamond, 64), player);
+                            addStackToInventory(new ItemStack(Items.DIAMOND, 64), player);
                             msg(player, "Added stack of diamonds to inventory");
                             completedSpell = true;
                         }
@@ -207,9 +219,10 @@ public class MagicWand extends Item
                         // 4
                         // 2 3
                         // 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.glowstone, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.GLOWSTONE, 64), player);
                             msg(player, "Added stack of glowstone to inventory");
                             completedSpell = true;
                         }
@@ -222,29 +235,29 @@ public class MagicWand extends Item
                     else if (p.isLeftBend(0, 1, 3))
                     {
                         // 4 2 3
-                        //   1
-                        
+                        // 1
+
                         InventoryPlayer inv = player.inventory;
 
                         int size = inv.getSizeInventory();
 
                         msg(player, "inventory size: " + size);
-                        
+
                         int num = 0;
                         for (int i = 0; i < size; i++)
                         {
                             ItemStack stack_ = inv.getStackInSlot(i);
-                         
+
                             if (stack_ != null)
-                            {                            
+                            {
                                 if (stack_.isItemEnchantable())
                                 {
-                                   stack_.addEnchantment(Enchantment.efficiency, 5);
-                                   num++;
+                                    stack_.addEnchantment(Enchantments.EFFICIENCY, 5);
+                                    num++;
                                 }
                             }
                         }
-                        
+
                         if (num > 0)
                         {
                             player.inventoryContainer.detectAndSendChanges();
@@ -263,8 +276,8 @@ public class MagicWand extends Item
                     if (p.isHalfRightBend(0, 1, 3))
                     {
                         // 3 4
-                        // 2
-                        // 1
+                        //  2
+                        //  1
                         spawnRabbit(pos.up(), world);
                         msg(player, "Spawned rabbit");
                         completedSpell = true;
@@ -273,10 +286,11 @@ public class MagicWand extends Item
                     {
                         // 3
                         // 4 2
-                        // 1
+                        //   1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Items.iron_ingot, 64), player);
+                            addStackToInventory(new ItemStack(Items.IRON_INGOT, 64), player);
                             msg(player, "Added stack of iron ingots to inventory");
                             completedSpell = true;
                         }
@@ -289,8 +303,9 @@ public class MagicWand extends Item
                     else if (p.isDoubleLeftBend(0, 1, 3))
                     {
                         // 3
-                        // 2
+                        //   2
                         // 4 1
+
                         double midX = pos.getX() + 0.5D;
                         double midZ = pos.getZ() + 0.5D;
                         double y = (double) pos.getY() + 0.5;
@@ -298,7 +313,7 @@ public class MagicWand extends Item
                         {
                             for (int x = -2; x <= 2; x++)
                             {
-                                world.spawnEntityInWorld(new EntityXPOrb(world, midX + x, y, midZ + z, 100));
+                                world.spawnEntity(new EntityXPOrb(world, midX + x, y, midZ + z, 100));
                             }
 
                         }
@@ -311,21 +326,23 @@ public class MagicWand extends Item
                 {
                     if (p.isHalfLeftBend(0, 1, 3))
                     {
-                        // 4 3
-                        // 2
-                        // 1
+                        // 4   3
+                        //   2
+                        //   1
+
                         spawnSheep(pos.up(), world);
                         msg(player, "Spawned sheep");
                         completedSpell = true;
                     }
                     else if (p.isRightBend(0, 1, 3))
                     {
-                        // 3
-                        // 2 4
-                        // 1
+                        //    3
+                        //  2 4
+                        //  1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Items.gold_ingot, 64), player);
+                            addStackToInventory(new ItemStack(Items.GOLD_INGOT, 64), player);
                             msg(player, "Added stack of gold ingots to inventory");
                             completedSpell = true;
                         }
@@ -337,12 +354,13 @@ public class MagicWand extends Item
                     }
                     else if (p.isDoubleRightBend(0, 1, 3))
                     {
-                        // 3
+                        //   3
                         // 2
                         // 1 4
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Items.ender_pearl, 1), player);
+                            addStackToInventory(new ItemStack(Items.ENDER_PEARL, 1), player);
                             msg(player, "Added ender pearl to inventory");
                             completedSpell = true;
                         }
@@ -362,9 +380,10 @@ public class MagicWand extends Item
                         // 3
                         // 2
                         // 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.planks, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.PLANKS, 64), player);
                             msg(player, "Added stack of oak planks to inventory");
                             completedSpell = true;
                         }
@@ -379,9 +398,10 @@ public class MagicWand extends Item
                         // 4 3
                         // 2
                         // 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.torch, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.TORCH, 64), player);
                             msg(player, "Added stack of torches to inventory");
                             completedSpell = true;
                         }
@@ -396,6 +416,7 @@ public class MagicWand extends Item
                         // 3 4
                         // 2
                         // 1
+
                         float health = player.getHealth();
                         if (health < 20f)
                         {
@@ -414,9 +435,10 @@ public class MagicWand extends Item
                         // 3
                         // 2 4
                         // 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Items.flint_and_steel, 1), player);
+                            addStackToInventory(new ItemStack(Items.FLINT_AND_STEEL, 1), player);
                             msg(player, "Added flint and steel to inventory");
                             completedSpell = true;
                         }
@@ -433,9 +455,10 @@ public class MagicWand extends Item
                     {
                         // 2
                         // 3 1 4
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.quartz_block, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.QUARTZ_BLOCK, 64), player);
                             msg(player, "Added stack of quartz blocks to inventory");
                             completedSpell = true;
                         }
@@ -447,7 +470,7 @@ public class MagicWand extends Item
                     }
                     else if (p.isLeftBend(0, 1, 3))
                     {
-                        if (world.provider.getDimensionId() != 0)
+                        if (world.provider.getDimension() != 0)
                         {
                             msg(player, "Spell must be performed in overworld!");
                             failedSpell = true;
@@ -455,7 +478,7 @@ public class MagicWand extends Item
                         else
                         {
                             BlockPos bedPos = player.getBedLocation();
-    
+
                             if (bedPos != null)
                             {
                                 player.setPositionAndUpdate(bedPos.getX() + 0.5D, bedPos.getY(), bedPos.getZ() + 0.5D);
@@ -474,9 +497,10 @@ public class MagicWand extends Item
                     {
                         // 2
                         // 4 3 1
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.glass, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.GLASS, 64), player);
                             msg(player, "Added stack of glass to inventory");
                             completedSpell = true;
                         }
@@ -491,11 +515,12 @@ public class MagicWand extends Item
                 {
                     // 2 4
                     // 1 3
+
                     if (p.isRightBend(0, 1, 3))
                     {
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.stone, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.STONE, 64), player);
                             msg(player, "Added stack of stone to inventory");
                             completedSpell = true;
                         }
@@ -509,9 +534,10 @@ public class MagicWand extends Item
                     {
                         // 2
                         // 4 1 3
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.quartz_stairs, 64), player);
+                            addStackToInventory(new ItemStack(Blocks.QUARTZ_STAIRS, 64), player);
                             msg(player, "Added stack of quartz stairs to inventory");
                             completedSpell = true;
                         }
@@ -525,8 +551,8 @@ public class MagicWand extends Item
                     {
                         // 2
                         // 1 3 4
-                        
-                        if (togglePotionEffect(player, 13, 0))
+
+                        if (togglePotionEffect(player, MobEffects.WATER_BREATHING, 1))
                             msg(player, "Added potion effect of underwater breathing to player");
                         else
                             msg(player, "Removed potion effect of underwater breathing from player");
@@ -541,23 +567,23 @@ public class MagicWand extends Item
                         // 2
                         // 1 4
                         // 3
-                        
-                        if (togglePotionEffect(player, Potion.digSpeed.getId(), 1))
-                            msg(player, "Added potion effect of dig speed to player");
+
+                        if (togglePotionEffect(player, Potion.getPotionById(3), 1))
+                            msg(player, "Added potion effect of haste (dig speed) to player");
                         else
-                            msg(player, "Removed potion effect of dig speed to player");
-    
+                            msg(player, "Removed potion effect of haste (dig speed) to player");
+
                         completedSpell = true;
-                    }                    
+                    }
                     else if (p.isLeftBend(2, 0, 3))
                     {
-                        //   2
+                        // 2
                         // 1 4
-                        //   3
-                        
+                        // 3
+
                         try
                         {
-                            addStackToInventory(new ItemStack(Blocks.beacon, 1), player);
+                            addStackToInventory(new ItemStack(Blocks.BEACON, 1), player);
                             msg(player, "Added beacon to inventory");
                             completedSpell = true;
                         }
@@ -569,18 +595,18 @@ public class MagicWand extends Item
                     }
                     else if (p.isLeftBend(3, 2, 0))
                     {
-                        //   2
-                        //   1
+                        // 2
+                        // 1
                         // 4 3
 
                         /* invisibility */
-                        if (togglePotionEffect(player, Potion.invisibility.getId(), 0))
+                        if (togglePotionEffect(player, MobEffects.INVISIBILITY, 0))
                             msg(player, "Added potion effect of invisibility to player");
                         else
                             msg(player, "Removed potion effect of invisibility to player");
-    
+
                         completedSpell = true;
-                    }                    
+                    }
                     else if (p.isRightBend(3, 2, 0))
                     {
                         // 2
@@ -589,7 +615,7 @@ public class MagicWand extends Item
 
                         try
                         {
-                            addStackToInventory(new ItemStack(Items.arrow, 64), player);
+                            addStackToInventory(new ItemStack(Items.ARROW, 64), player);
                             msg(player, "Added stack of arrows to inventory");
                             completedSpell = true;
                         }
@@ -598,16 +624,16 @@ public class MagicWand extends Item
                             msg(player, "Inventory was already full!");
                             failedSpell = true;
                         }
-                    }                    
+                    }
                     else if (p.isLeftBend(0, 1, 3))
                     {
                         // 4 2
-                        //   1
-                        //   3
+                        // 1
+                        // 3
 
                         try
                         {
-                            addStackToInventory(new ItemStack(Items.bow, 1), player);
+                            addStackToInventory(new ItemStack(Items.BOW, 1), player);
                             msg(player, "Added bow to inventory");
                             completedSpell = true;
                         }
@@ -616,21 +642,15 @@ public class MagicWand extends Item
                             msg(player, "Inventory was already full!");
                             failedSpell = true;
                         }
-                    }                    
+                    }
                 }
 
                 if (completedSpell)
                 {
-                    try
-                    {
-                        addDamageToWand(stack, player, world, pos);
-                        playWandSound(world, pos);
-                    }
-                    catch (WandRenderedUselessException e)
-                    {
-                        stack.damageItem(1, player);
-                        playBreakingWandSound(world, pos);
-                    }
+                    stack.damageItem(1, player);
+                    
+                    if (stack.getItemDamage() <= stack.getMaxDamage())
+                        playWandSound(player, world, pos);
                 }
 
                 if (completedSpell || failedSpell)
@@ -638,12 +658,12 @@ public class MagicWand extends Item
             }
         }
 
-        return true;
+        return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
     }
 
     private void msg(EntityPlayer player, String msg)
     {
-        player.addChatComponentMessage(new ChatComponentText(msg));
+        player.sendMessage(new TextComponentString(msg));
     }
 
     private void spawnRabbit(BlockPos pos, World world)
@@ -654,7 +674,7 @@ public class MagicWand extends Item
 
         rabbit.setRabbitType(1);
         rabbit.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), yaw, 0.0F);
-        world.spawnEntityInWorld(rabbit);
+        world.spawnEntity(rabbit);
     }
 
     private void spawnSheep(BlockPos pos, World world)
@@ -664,7 +684,7 @@ public class MagicWand extends Item
         float yaw = (float) (Math.random() * 360);
 
         sheep.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), yaw, 0.0F);
-        world.spawnEntityInWorld(sheep);
+        world.spawnEntity(sheep);
     }
 
     private void add12Hours(World world)
@@ -680,21 +700,21 @@ public class MagicWand extends Item
 
         worldInfo.setRaining(!worldInfo.isRaining());
     }
-    
+
     private void addStackToInventory(ItemStack stack, EntityPlayer player) throws InventoryFullException
     {
         boolean foundSlot = false;
         InventoryPlayer inventory = player.inventory;
 
         int numMainInventorySlots = inventory.getSizeInventory();
-        int numArmorInventorySlots = inventory.armorInventory.length;
+        int numArmorInventorySlots = inventory.armorInventory.size();
 
         int numSlots = numMainInventorySlots - numArmorInventorySlots;
         
         for (int i = 0; i < numSlots; i++)
         {
             ItemStack slotStack = inventory.getStackInSlot(i);
-            if (slotStack == null || slotStack.stackSize == 0)
+            if (slotStack == null || slotStack.getCount() == 0)
             {
                 inventory.setInventorySlotContents(i, stack);
                 player.inventoryContainer.detectAndSendChanges();
@@ -709,60 +729,60 @@ public class MagicWand extends Item
         }
     }
 
-    private boolean togglePotionEffect(EntityPlayer player, int id, int effectAmplifier)
-    {        
-        if (!player.isPotionActive(id))
+    private boolean togglePotionEffect(EntityPlayer player, Potion potion, int effectAmplifier)
+    {
+        if (!player.isPotionActive(potion))
         {
-            PotionEffect eff = new PotionEffect(id, 100000, effectAmplifier);
+            PotionEffect eff = new PotionEffect(potion, 100000, effectAmplifier);
             player.addPotionEffect(eff);
             return true;
         }
         else
         {
-            player.removePotionEffect(id);
+            player.removePotionEffect(potion);
             return false;
-        }        
+        }
+    }
+
+    private void playWandSound(EntityPlayer player, World world, BlockPos pos)
+    {
+        world.playSound(null, pos, Sounds.magicWand, SoundCategory.MASTER, 1, 1);
     }
     
-    private void playWandSound(World world, BlockPos pos)
+    public static interface IMagicWandPlayer
     {
-        world.playSoundEffect(pos.getX(), pos.getY() + 1, pos.getZ(), MagicWandMod.modid + ":" + "magic_wand", 1, 1);
+        int getNumUses();
+        void setNumUses(int value);
+        int[] getLastUsesX();
+        int[] getLastUsesZ();
+        void setLastUsesX(int[] value);
+        void setLastUsesZ(int[] value);
+        void clearUses();
+        void addUsePosition(BlockPos pos);
+        boolean hasFourUsePositions();
+        boolean isStraightLine(int start, int mid, int end);
+        boolean isHalfLeftBend(int start, int mid, int end);
+        boolean isDoubleLeftBend(int start, int mid, int end);
+        boolean isHalfRightBend(int start, int mid, int end);
+        boolean isDoubleRightBend(int start, int mid, int end);
+        boolean isLeftBend(int start, int mid, int end);
+        boolean isRightBend(int start, int mid, int end);
     }
 
-    private void playBreakingWandSound(World world, BlockPos pos)
+    public static class MagicWandPlayer implements IMagicWandPlayer
     {
-        world.playSoundEffect(pos.getX(), pos.getY() + 1, pos.getZ(), MagicWandMod.modid + ":" + "magic_wand_break", 1, 1);
-    }
-
-    private void addDamageToWand(ItemStack stack, EntityPlayer player, World world, BlockPos pos) throws WandRenderedUselessException
-    {
-        int damage = this.getDamage(stack);
-        damage++;
-
-        setDamage(stack, damage);
-
-        if (damage >= 100)
-        {
-            throw new WandRenderedUselessException();
-        }
-
-    }
-
-    public static void initHandling()
-    {
-        MinecraftForge.EVENT_BUS.register(new MagicWandPlayer());
-    }
-
-    public static class MagicWandPlayer implements IExtendedEntityProperties
-    {
-        private BlockPos[] lastUses = new BlockPos[4];
+        private int[] lastUsesX = new int[4];
+        private int[] lastUsesZ = new int[4];
+        
         private int numUses = 0;
 
-        private final String NBT_X = "x";
-        private final String NBT_Y = "y";
-        private final String NBT_Z = "z";
-        private final String NBT_NUM = "numUses";
-        
+    	public int getNumUses() { return numUses; }
+    	public void setNumUses(int value) {	numUses = value; }
+    	public int[] getLastUsesX()	{ return lastUsesX; }
+    	public int[] getLastUsesZ() { return lastUsesZ; }
+    	public void setLastUsesX(int[] value) {	lastUsesX = value; }
+    	public void setLastUsesZ(int[] value) { lastUsesZ = value; }
+
         public void clearUses()
         {
             numUses = 0;
@@ -772,13 +792,23 @@ public class MagicWand extends Item
         {
             if (numUses == 4)
             {
-                lastUses[0] = lastUses[1];
-                lastUses[1] = lastUses[2];
-                lastUses[2] = lastUses[3];
-                lastUses[3] = pos;
+                lastUsesX[0] = lastUsesX[1];
+                lastUsesX[1] = lastUsesX[2];
+                lastUsesX[2] = lastUsesX[3];
+                lastUsesX[3] = pos.getX();
+
+                lastUsesZ[0] = lastUsesZ[1];
+                lastUsesZ[1] = lastUsesZ[2];
+                lastUsesZ[2] = lastUsesZ[3];
+                lastUsesZ[3] = pos.getZ();
             }
             else
-                lastUses[numUses++] = pos;
+            {
+                lastUsesX[numUses] = pos.getX();
+                lastUsesZ[numUses] = pos.getZ();
+                
+                numUses++;
+            }
         }
 
         public boolean hasFourUsePositions()
@@ -786,48 +816,48 @@ public class MagicWand extends Item
             return numUses == 4;
         }
 
-        private boolean isStraightLine(int start, int mid, int end)
+        public boolean isStraightLine(int start, int mid, int end)
         {
-            int startX = lastUses[start].getX();
-            int startZ = lastUses[start].getZ();
+            int startX = lastUsesX[start];
+            int startZ = lastUsesZ[start];
 
-            if (startX == lastUses[mid].getX())
+            if (startX == lastUsesX[mid])
             {
-                if (startX != lastUses[end].getX())
+                if (startX != lastUsesX[end])
                     return false;
 
-                int step = lastUses[mid].getZ() - startZ;
+                int step = lastUsesZ[mid] - startZ;
                 if (step != -1 && step != 1)
                     return false;
 
-                return lastUses[end].getZ() - lastUses[mid].getZ() == step;
+                return lastUsesZ[end] - lastUsesZ[mid] == step;
             }
-            else if (startZ == lastUses[mid].getZ())
+            else if (startZ == lastUsesZ[mid])
             {
-                if (startZ != lastUses[end].getZ())
+                if (startZ != lastUsesZ[end])
                     return false;
 
-                int step = lastUses[mid].getX() - startX;
+                int step = lastUsesX[mid] - startX;
                 if (step != -1 && step != 1)
                     return false;
 
-                return lastUses[end].getX() - lastUses[mid].getX() == step;
+                return lastUsesX[end] - lastUsesX[mid] == step;
             }
             else
                 return false;
         }
 
-        private boolean isHalfLeftBend(int start, int mid, int end)
+        public boolean isHalfLeftBend(int start, int mid, int end)
         {
-            int startX = lastUses[start].getX();
-            int startZ = lastUses[start].getZ();
+            int startX = lastUsesX[start];
+            int startZ = lastUsesZ[start];
 
-            if (startX == lastUses[mid].getX())
+            if (startX == lastUsesX[mid])
             {
-                int dz1 = lastUses[mid].getZ() - lastUses[start].getZ();
-                if (lastUses[end].getZ() == lastUses[mid].getZ() + dz1)
+                int dz1 = lastUsesZ[mid] - lastUsesZ[start];
+                if (lastUsesZ[end] == lastUsesZ[mid] + dz1)
                 {
-                    int dx2 = lastUses[end].getX() - lastUses[mid].getX();
+                    int dx2 = lastUsesX[end] - lastUsesX[mid];
 
                     if ((dz1 != -1 && dz1 != 1) || (dx2 != -1 && dx2 != 1))
                         return false;
@@ -837,12 +867,12 @@ public class MagicWand extends Item
                 else
                     return false;
             }
-            else if (startZ == lastUses[mid].getZ())
+            else if (startZ == lastUsesZ[mid])
             {
-                int dx1 = lastUses[mid].getX() - lastUses[start].getX();
-                if (lastUses[end].getX() == lastUses[mid].getX() + dx1)
+                int dx1 = lastUsesX[mid] - lastUsesX[start];
+                if (lastUsesX[end] == lastUsesX[mid] + dx1)
                 {
-                    int dz2 = lastUses[end].getZ() - lastUses[mid].getZ();
+                    int dz2 = lastUsesZ[end] - lastUsesZ[mid];
 
                     if ((dx1 != -1 && dx1 != 1) || (dz2 != -1 && dz2 != 1))
                         return false;
@@ -856,17 +886,17 @@ public class MagicWand extends Item
                 return false;
         }
 
-        private boolean isDoubleLeftBend(int start, int mid, int end)
+        public boolean isDoubleLeftBend(int start, int mid, int end)
         {
-            int startX = lastUses[start].getX();
-            int startZ = lastUses[start].getZ();
+            int startX = lastUsesX[start];
+            int startZ = lastUsesZ[start];
 
-            if (startX == lastUses[mid].getX())
+            if (startX == lastUsesX[mid])
             {
-                if (lastUses[end].getZ() == startZ)
+                if (lastUsesZ[end] == startZ)
                 {
-                    int dz1 = lastUses[mid].getZ() - lastUses[start].getZ();
-                    int dx2 = lastUses[end].getX() - lastUses[mid].getX();
+                    int dz1 = lastUsesZ[mid] - lastUsesZ[start];
+                    int dx2 = lastUsesX[end] - lastUsesX[mid];
 
                     if ((dz1 != -1 && dz1 != 1) || (dx2 != -1 && dx2 != 1))
                         return false;
@@ -876,12 +906,12 @@ public class MagicWand extends Item
                 else
                     return false;
             }
-            else if (startZ == lastUses[mid].getZ())
+            else if (startZ == lastUsesZ[mid])
             {
-                if (lastUses[end].getX() == startX)
+                if (lastUsesX[end] == startX)
                 {
-                    int dx1 = lastUses[mid].getX() - lastUses[start].getX();
-                    int dz2 = lastUses[end].getZ() - lastUses[mid].getZ();
+                    int dx1 = lastUsesX[mid] - lastUsesX[start];
+                    int dz2 = lastUsesZ[end] - lastUsesZ[mid];
 
                     if ((dx1 != -1 && dx1 != 1) || (dz2 != -1 && dz2 != 1))
                         return false;
@@ -895,17 +925,17 @@ public class MagicWand extends Item
                 return false;
         }
 
-        private boolean isHalfRightBend(int start, int mid, int end)
+        public boolean isHalfRightBend(int start, int mid, int end)
         {
-            int startX = lastUses[start].getX();
-            int startZ = lastUses[start].getZ();
+            int startX = lastUsesX[start];
+            int startZ = lastUsesZ[start];
 
-            if (startX == lastUses[mid].getX())
+            if (startX == lastUsesX[mid])
             {
-                int dz1 = lastUses[mid].getZ() - lastUses[start].getZ();
-                if (lastUses[end].getZ() == lastUses[mid].getZ() + dz1)
+                int dz1 = lastUsesZ[mid] - lastUsesZ[start];
+                if (lastUsesZ[end] == lastUsesZ[mid] + dz1)
                 {
-                    int dx2 = lastUses[end].getX() - lastUses[mid].getX();
+                    int dx2 = lastUsesX[end] - lastUsesX[mid];
 
                     if ((dz1 != -1 && dz1 != 1) || (dx2 != -1 && dx2 != 1))
                         return false;
@@ -915,12 +945,12 @@ public class MagicWand extends Item
                 else
                     return false;
             }
-            else if (startZ == lastUses[mid].getZ())
+            else if (startZ == lastUsesZ[mid])
             {
-                int dx1 = lastUses[mid].getX() - lastUses[start].getX();
-                if (lastUses[end].getX() == lastUses[mid].getX() + dx1)
+                int dx1 = lastUsesX[mid] - lastUsesX[start];
+                if (lastUsesX[end] == lastUsesX[mid] + dx1)
                 {
-                    int dz2 = lastUses[end].getZ() - lastUses[mid].getZ();
+                    int dz2 = lastUsesZ[end] - lastUsesZ[mid];
 
                     if ((dx1 != -1 && dx1 != 1) || (dz2 != -1 && dz2 != 1))
                         return false;
@@ -934,17 +964,17 @@ public class MagicWand extends Item
                 return false;
         }
 
-        private boolean isDoubleRightBend(int start, int mid, int end)
+        public boolean isDoubleRightBend(int start, int mid, int end)
         {
-            int startX = lastUses[start].getX();
-            int startZ = lastUses[start].getZ();
+            int startX = lastUsesX[start];
+            int startZ = lastUsesZ[start];
 
-            if (startX == lastUses[mid].getX())
+            if (startX == lastUsesX[mid])
             {
-                if (lastUses[end].getZ() == startZ)
+                if (lastUsesZ[end] == startZ)
                 {
-                    int dz1 = lastUses[mid].getZ() - lastUses[start].getZ();
-                    int dx2 = lastUses[end].getX() - lastUses[mid].getX();
+                    int dz1 = lastUsesZ[mid] - lastUsesZ[start];
+                    int dx2 = lastUsesX[end] - lastUsesX[mid];
 
                     if ((dz1 != -1 && dz1 != 1) || (dx2 != -1 && dx2 != 1))
                         return false;
@@ -954,12 +984,12 @@ public class MagicWand extends Item
                 else
                     return false;
             }
-            else if (startZ == lastUses[mid].getZ())
+            else if (startZ == lastUsesZ[mid])
             {
-                if (lastUses[end].getX() == startX)
+                if (lastUsesX[end] == startX)
                 {
-                    int dx1 = lastUses[mid].getX() - lastUses[start].getX();
-                    int dz2 = lastUses[end].getZ() - lastUses[mid].getZ();
+                    int dx1 = lastUsesX[mid] - lastUsesX[start];
+                    int dz2 = lastUsesZ[end] - lastUsesZ[mid];
 
                     if ((dx1 != -1 && dx1 != 1) || (dz2 != -1 && dz2 != 1))
                         return false;
@@ -973,17 +1003,17 @@ public class MagicWand extends Item
                 return false;
         }
 
-        private boolean isRightBend(int start, int mid, int end)
+        public boolean isRightBend(int start, int mid, int end)
         {
-            int startX = lastUses[start].getX();
-            int startZ = lastUses[start].getZ();
+            int startX = lastUsesX[start];
+            int startZ = lastUsesZ[start];
 
-            if (startX == lastUses[mid].getX())
+            if (startX == lastUsesX[mid])
             {
-                if (lastUses[mid].getZ() == lastUses[end].getZ())
+                if (lastUsesZ[mid] == lastUsesZ[end])
                 {
-                    int dz1 = lastUses[mid].getZ() - lastUses[start].getZ();
-                    int dx2 = lastUses[end].getX() - lastUses[mid].getX();
+                    int dz1 = lastUsesZ[mid] - lastUsesZ[start];
+                    int dx2 = lastUsesX[end] - lastUsesX[mid];
 
                     if ((dz1 != -1 && dz1 != 1) || (dx2 != -1 && dx2 != 1))
                         return false;
@@ -993,12 +1023,12 @@ public class MagicWand extends Item
                 else
                     return false;
             }
-            else if (startZ == lastUses[mid].getZ())
+            else if (startZ == lastUsesZ[mid])
             {
-                if (lastUses[mid].getX() == lastUses[end].getX())
+                if (lastUsesX[mid] == lastUsesX[end])
                 {
-                    int dx1 = lastUses[mid].getX() - lastUses[start].getX();
-                    int dz2 = lastUses[end].getZ() - lastUses[mid].getZ();
+                    int dx1 = lastUsesX[mid] - lastUsesX[start];
+                    int dz2 = lastUsesZ[end] - lastUsesZ[mid];
 
                     if ((dx1 != -1 && dx1 != 1) || (dz2 != -1 && dz2 != 1))
                         return false;
@@ -1012,17 +1042,17 @@ public class MagicWand extends Item
                 return false;
         }
 
-        private boolean isLeftBend(int start, int mid, int end)
+        public boolean isLeftBend(int start, int mid, int end)
         {
-            int startX = lastUses[start].getX();
-            int startZ = lastUses[start].getZ();
+            int startX = lastUsesX[start];
+            int startZ = lastUsesZ[start];
 
-            if (startX == lastUses[mid].getX())
+            if (startX == lastUsesX[mid])
             {
-                if (lastUses[mid].getZ() == lastUses[end].getZ())
+                if (lastUsesZ[mid] == lastUsesZ[end])
                 {
-                    int dz1 = lastUses[mid].getZ() - lastUses[start].getZ();
-                    int dx2 = lastUses[end].getX() - lastUses[mid].getX();
+                    int dz1 = lastUsesZ[mid] - lastUsesZ[start];
+                    int dx2 = lastUsesX[end] - lastUsesX[mid];
 
                     if ((dz1 != -1 && dz1 != 1) || (dx2 != -1 && dx2 != 1))
                         return false;
@@ -1032,12 +1062,12 @@ public class MagicWand extends Item
                 else
                     return false;
             }
-            else if (startZ == lastUses[mid].getZ())
+            else if (startZ == lastUsesZ[mid])
             {
-                if (lastUses[mid].getX() == lastUses[end].getX())
+                if (lastUsesX[mid] == lastUsesX[end])
                 {
-                    int dx1 = lastUses[mid].getX() - lastUses[start].getX();
-                    int dz2 = lastUses[end].getZ() - lastUses[mid].getZ();
+                    int dx1 = lastUsesX[mid] - lastUsesX[start];
+                    int dz2 = lastUsesZ[end] - lastUsesZ[mid];
 
                     if ((dx1 != -1 && dx1 != 1) || (dz2 != -1 && dz2 != 1))
                         return false;
@@ -1049,89 +1079,50 @@ public class MagicWand extends Item
             }
             else
                 return false;
-        }
-
-        public static void initHandling()
-        {
-            MinecraftForge.EVENT_BUS.register(new Handler());
-        }
-
-        @Override
-        public void saveNBTData(NBTTagCompound compound)
-        {
-            int[] x = new int[4];
-            int[] y = new int[4];
-            int[] z = new int[4];
-
-            for (int i = 0; i < 4; i++)
-            {
-                BlockPos pos = lastUses[i];
-                
-                x[i] = pos != null ? pos.getX() : 0;
-                y[i] = pos != null ? pos.getY() : 0;
-                z[i] = pos != null ? pos.getZ() : 0;
-            }
-
-            NBTTagCompound tag = new NBTTagCompound();
-
-            tag.setIntArray(NBT_X, x);
-            tag.setIntArray(NBT_Y, y);
-            tag.setIntArray(NBT_Z, z);
-
-            tag.setInteger(NBT_NUM, numUses);
-
-            compound.setTag(MagicWand.NAME, tag);
-        }
-        
-        @Override
-        public void loadNBTData(NBTTagCompound compound)
-        {
-            NBTTagCompound tag = (NBTTagCompound) compound.getTag(MagicWand.NAME);
-
-            int[] x = tag.getIntArray(NBT_X);
-            int[] y = tag.getIntArray(NBT_Y);
-            int[] z = tag.getIntArray(NBT_Z);
-
-            for (int i = 0; i < 4; i++)
-            {
-                lastUses[i] = new BlockPos(x[i], y[i], z[i]);
-            }
-
-            numUses = tag.getInteger(NBT_NUM);
-        }
-
-        @Override
-        public void init(Entity entity, World world)
-        {
-            numUses = 0;
-        }
-
-        public static MagicWandPlayer get(EntityPlayer player)
-        {
-            return (MagicWandPlayer) player.getExtendedProperties(MagicWand.NAME);
-        }
-
-        public static class Handler
-        {
-            @SubscribeEvent
-            public void entityConstructing(EntityEvent.EntityConstructing event)
-            {
-                if (!(event.entity instanceof EntityPlayer) || get((EntityPlayer) event.entity) != null)
-                    return;
-
-                event.entity.registerExtendedProperties(MagicWand.NAME, new MagicWandPlayer());
-            }
         }
     }
 
-    public class EventSubscriber
+    public static class MagicWandPlayerStorage implements IStorage<IMagicWandPlayer>
     {
-        @SubscribeEvent
-        public void onEntityConstructing(EntityConstructing event)
+        @Override
+        public NBTBase writeNBT(Capability<IMagicWandPlayer> capability, IMagicWandPlayer instance, EnumFacing side)
         {
-            if (event.entity instanceof EntityPlayerMP)
+            NBTTagCompound tag = new NBTTagCompound();
+            int numUses = instance.getNumUses();
+            
+            tag.setInteger("numuses", numUses);
+                
+            tag.setIntArray("lastx", instance.getLastUsesX());
+            tag.setIntArray("lastz", instance.getLastUsesZ());
+            
+            return tag;
+        }
+
+        @Override
+        public void readNBT(Capability<IMagicWandPlayer> capability, IMagicWandPlayer instance, EnumFacing side,
+                NBTBase nbt)
+        {
+            if (nbt instanceof NBTTagCompound)
             {
-                event.entity.registerExtendedProperties(MagicWand.NAME, new MagicWandPlayer());
+                NBTTagCompound tag = (NBTTagCompound) nbt;
+                
+                int numUses = tag.getInteger("numuses");
+                
+                BlockPos[] lastUses = new BlockPos[4];
+                
+                instance.setNumUses(numUses);
+                
+                instance.setLastUsesX(tag.getIntArray("lastx"));
+                instance.setLastUsesZ(tag.getIntArray("lastz"));
+            }
+        }
+
+        public static class Factory implements Callable<IMagicWandPlayer>
+        {
+            @Override
+            public IMagicWandPlayer call() throws Exception
+            {
+                return new MagicWandPlayer();
             }
         }
     }
