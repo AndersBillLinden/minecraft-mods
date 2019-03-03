@@ -25,6 +25,7 @@ public class IronGolemFarmKit extends Item
     public IronGolemFarmKit()
     {
         setMaxStackSize(64);
+        setRegistryName(NAME);
         setUnlocalizedName(NAME);
     }
 
@@ -71,6 +72,7 @@ public class IronGolemFarmKit extends Item
             
             stack.setCount(stack.getCount() - 1);
         }
+
         return EnumActionResult.SUCCESS;
     }
 

@@ -1,7 +1,7 @@
 package Mod;
 
+import commands.AddIronGolemFarmCommand;
 import items.IronGolemFarmKit;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -20,26 +20,23 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import proxies.CommonProxy;
 
-import commands.AddIronGolemFarmCommand;
-
-@Mod(modid = IronGolemFarmMod.modid, version = IronGolemFarmMod.version, name = "IronGolemFarmMod")
+@Mod.EventBusSubscriber(modid = IronGolemFarmMod.MODID)
+@Mod(modid = IronGolemFarmMod.MODID, version = IronGolemFarmMod.version)
 public class IronGolemFarmMod
 {
-    public static Item ironGolemFarmKit;
+    public static Item ironGolemFarmKit = new IronGolemFarmKit();
     
-    public static Block blockMobSpawner;
-
     @SidedProxy(clientSide = "proxies.ClientProxy", serverSide = "proxies.ServerProxy")
     public static CommonProxy proxy;
 
-    public static final String modid = "irongolemfarmmod";
+    public static final String MODID = "irongolemfarmmod";
     public static final String version = "1.0.0";
 
     @EventHandler
     public void load(FMLPreInitializationEvent event)
     {
         GameRegistry.addShapedRecipe(new ResourceLocation(IronGolemFarmKit.NAME),
-                new ResourceLocation(IronGolemFarmMod.modid),
+                new ResourceLocation(IronGolemFarmMod.MODID),
                 new ItemStack(ironGolemFarmKit),
                 new Object[]
         {
@@ -55,7 +52,7 @@ public class IronGolemFarmMod
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().registerAll(ironGolemFarmKit = new IronGolemFarmKit());
+        event.getRegistry().registerAll(ironGolemFarmKit);
     }    
 
     @SubscribeEvent
