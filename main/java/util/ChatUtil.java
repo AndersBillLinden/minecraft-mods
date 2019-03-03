@@ -11,18 +11,6 @@ public class ChatUtil
 {
     public static void msg(EntityPlayer player, String message)
     {
-        player.addChatMessage(new ChatComponentText(message));
-    }
-    
-    public static void msgAll(String message)
-    {
-        World w = MinecraftServer.getServer().getEntityWorld();
-        
-        java.util.List<EntityPlayer> players = w.playerEntities;
-        
-        for (EntityPlayer p : players)
-        {
-            msg(p, message);
-        }
-    }
+        player.addChatComponentMessage(new ChatComponentText(message));
+    }    
 }

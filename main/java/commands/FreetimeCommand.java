@@ -3,23 +3,16 @@ package commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import Mod.ExtraCommandsMod;
-import util.ChatUtil;
-import util.InventoryUtil;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import util.ChatUtil;
 
-public class AddUnderWaterBreathingCommand implements ICommand
+public class FreetimeCommand implements ICommand
 {
     @Override
     public int compareTo(ICommand arg0)
@@ -30,13 +23,13 @@ public class AddUnderWaterBreathingCommand implements ICommand
     @Override
     public String getCommandName()
     {
-        return "snorkle";
+        return "freetime";
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender)
     {
-        return "snorkle";
+        return "freetime";
     }
 
     @Override
@@ -55,17 +48,16 @@ public class AddUnderWaterBreathingCommand implements ICommand
             Entity entity = sender.getCommandSenderEntity();
             
             if (entity instanceof EntityPlayer)
-            {
-                EntityPlayer player = (EntityPlayer)entity;
-             
-                PotionEffect eff = new PotionEffect(13, 100000, 0);
-                player.addPotionEffect(eff);
+            {                
+                EntityPlayer player = (EntityPlayer)entity;             
+                BlockPos playerCurrentPos = player.getPosition();
                 
-                ChatUtil.msg(player, "Added underwater breaking!");
+                player.setPositionAndUpdate(0.5D, playerCurrentPos.getY(), 0.5D);
+                ChatUtil.msg(player, "Teleported to start");
             }
         }
     }
-
+    
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender sender)
     {

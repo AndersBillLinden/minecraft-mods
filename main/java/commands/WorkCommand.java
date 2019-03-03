@@ -3,22 +3,16 @@ package commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.ChatUtil;
-import util.InventoryUtil;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import util.ChatUtil;
 
-public class GoldCommand implements ICommand
+public class WorkCommand implements ICommand
 {
     @Override
     public int compareTo(ICommand arg0)
@@ -29,13 +23,13 @@ public class GoldCommand implements ICommand
     @Override
     public String getCommandName()
     {
-        return "gold";
+        return "work";
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender)
     {
-        return "gold";
+        return "work";
     }
 
     @Override
@@ -55,19 +49,37 @@ public class GoldCommand implements ICommand
             
             if (entity instanceof EntityPlayer)
             {
+                int maxHeight = 0;
+                
                 EntityPlayer player = (EntityPlayer)entity;
+                BlockPos pos = calcHashFromPlayer(world, player);
              
-                try
-                {
-                    InventoryUtil.addStackToInventory(new ItemStack(Items.gold_ingot, 64), player);
-                    ChatUtil.msg(player, "Added stack of gold!");
-                }
-                catch(InventoryUtil.InventoryFullException e)
-                {
-                    ChatUtil.msg(player, "The inventory was full, cannot add gold!");
-                }
+                BlockPos playerCurrentPos = player.getPosition();
+                
+                player.setPositionAndUpdate(pos.getX() + 0.5D, playerCurrentPos.getY(), pos.getZ() + 0.5D);
+                ChatUtil.msg(player, "Teleported to work site");
             }
         }
+    }
+    
+    private BlockPos calcHashFromPlayer(World world, EntityPlayer player)
+    {
+        String nick = player.getDisplayNameString();
+        int strlen = nick.length();
+        
+        int xhash = 557;
+        int zhash = 141;
+        for (int i = 0; i < strlen; i++) {
+            xhash = xhash * 31 + nick.charAt(i);
+            zhash = zhash * 31 + nick.charAt(i);
+        }
+        
+        int x = ((xhash >= 0 ? xhash : -xhash) % 100000) - 50000;
+        int z = ((zhash >= 0 ? zhash : -zhash) % 100000) - 50000;
+        
+        BlockPos pos = new BlockPos(x, 0, z);
+                
+        return pos;
     }
 
     @Override
