@@ -11,7 +11,6 @@ import commands.AddNightVisionCommand;
 import commands.AddTwelveHoursCommand;
 import commands.AddUnderWaterBreathingCommand;
 import commands.AxeCommand;
-import commands.BecomeAdminCommand;
 import commands.BedCommand;
 import commands.BedrockCommand;
 import commands.CactiiCommand;
@@ -44,7 +43,7 @@ import commands.VillagerSpawnerEggsCommand;
 @Mod(modid = ExtraCommandsMod.modid, version = ExtraCommandsMod.version, name = "ExtraCommandsMod")
 public class ExtraCommandsMod
 {
-    @SidedProxy(clientSide = "proxies.ClientProxy", serverSide = "proxies.ServerProxy")
+    @SidedProxy(clientSide = "proxies.CommonProxy", serverSide = "proxies.CommonProxy")
     public static CommonProxy proxy;
 
     public static final String modid = "extracommandsmod";
@@ -69,7 +68,6 @@ public class ExtraCommandsMod
         event.registerServerCommand(new AddTwelveHoursCommand());
         event.registerServerCommand(new AddUnderWaterBreathingCommand());
         event.registerServerCommand(new AxeCommand());
-        event.registerServerCommand(new BecomeAdminCommand());
         event.registerServerCommand(new BedCommand());
         event.registerServerCommand(new BedrockCommand());
         event.registerServerCommand(new CactiiCommand());

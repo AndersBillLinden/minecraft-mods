@@ -1,25 +1,16 @@
 package commands;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.ChatUtil;
-import util.InventoryUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class CreeperRingCommand implements ICommand
@@ -31,25 +22,25 @@ public class CreeperRingCommand implements ICommand
     }
 
     @Override
-    public String getCommandName()
+    public String getName()
     {
         return "creepers";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "creepers";
     }
 
     @Override
-    public List<String> getCommandAliases()
+    public List<String> getAliases()
     {
         return new ArrayList<String>();
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         World world = sender.getEntityWorld();
         
@@ -77,20 +68,21 @@ public class CreeperRingCommand implements ICommand
                     creeper.rotationYaw = i;
                     creeper.setPosition(creeperPos.getX(), highPos.getY(), creeperPos.getZ());
                     
-                    world.spawnEntityInWorld(creeper);
+                    world.spawnEntity(creeper);
                 }
             }
         }
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender)
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
     {
         return true;
     }
 
     @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+            net.minecraft.util.math.BlockPos targetPos)
     {
         return null;
     }

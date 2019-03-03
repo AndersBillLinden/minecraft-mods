@@ -3,22 +3,14 @@ package commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import Mod.ExtraCommandsMod;
-import util.ChatUtil;
-import util.InventoryUtil;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGiantZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class GiantZombieCommand implements ICommand
@@ -30,25 +22,25 @@ public class GiantZombieCommand implements ICommand
     }
 
     @Override
-    public String getCommandName()
+    public String getName()
     {
         return "giantzombie";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "giantzombie";
     }
 
     @Override
-    public List<String> getCommandAliases()
+    public List<String> getAliases()
     {
         return new ArrayList<String>();
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         World world = sender.getEntityWorld();
         
@@ -65,19 +57,20 @@ public class GiantZombieCommand implements ICommand
                 EntityGiantZombie giantZombie = new EntityGiantZombie(world);
                 giantZombie.setPosition(pos.getX(), pos.getY(), pos.getZ());
                 
-                world.spawnEntityInWorld(giantZombie);
+                world.spawnEntity(giantZombie);
             }
         }
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender)
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
     {
         return true;
     }
 
     @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+            net.minecraft.util.math.BlockPos targetPos)
     {
         return null;
     }
