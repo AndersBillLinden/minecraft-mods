@@ -29,10 +29,11 @@ public class IronGolemFarmKit extends Item
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {        
         if (!world.isRemote)
         {
+            ItemStack stack = player.getHeldItem(hand);
             float direction = (360 + player.rotationYaw) % 360;
 
             boolean south = direction < 90 || direction >= 270;
@@ -68,7 +69,7 @@ public class IronGolemFarmKit extends Item
             
             world.playSound(null, player.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
             
-            stack.stackSize--;
+            stack.setCount(stack.getCount() - 1);
         }
         return EnumActionResult.SUCCESS;
     }
@@ -183,7 +184,7 @@ public class IronGolemFarmKit extends Item
         EntityVillager v = new EntityVillager(world);
         v.setPosition(x, y + 3.5, z);
 
-        world.spawnEntityInWorld(v);
+        world.spawnEntity(v);
     }
     
     private void buildTorches(World world, int northVector, int eastVector, int x, int y, int z)

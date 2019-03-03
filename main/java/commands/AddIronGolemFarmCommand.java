@@ -27,24 +27,6 @@ public class AddIronGolemFarmCommand implements ICommand
     }
 
     @Override
-    public String getCommandName()
-    {
-        return "addfarm";
-    }
-
-    @Override
-    public String getCommandUsage(ICommandSender sender)
-    {
-        return "addfarm";
-    }
-
-    @Override
-    public List<String> getCommandAliases()
-    {
-        return new ArrayList<String>();
-    }
-
-    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         World world = sender.getEntityWorld();
@@ -82,10 +64,29 @@ public class AddIronGolemFarmCommand implements ICommand
         return false;
     }
 
-	@Override
-	public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args,
-			net.minecraft.util.math.BlockPos pos) {
-		// TODO Auto-generated method stub
-		return null;
-	}    
+    @Override
+    public String getName()
+    {
+        return "addfarm";
+    }
+
+    @Override
+    public String getUsage(ICommandSender sender)
+    {
+        return "addfarm";
+    }
+
+    @Override
+    public List<String> getAliases()
+    {
+        return new ArrayList<String>();
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+            BlockPos targetPos)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }    
 }

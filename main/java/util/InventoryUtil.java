@@ -12,14 +12,14 @@ public class InventoryUtil
         InventoryPlayer inventory = player.inventory;
 
         int numMainInventorySlots = inventory.getSizeInventory();
-        int numArmorInventorySlots = inventory.armorInventory.length;
+        int numArmorInventorySlots = inventory.armorInventory.size();
 
         int numSlots = numMainInventorySlots - numArmorInventorySlots;
         
         for (int i = 0; i < numSlots; i++)
         {
             ItemStack slotStack = inventory.getStackInSlot(i);
-            if (slotStack == null || slotStack.stackSize == 0)
+            if (slotStack == null || slotStack.getCount() == 0)
             {
                 inventory.setInventorySlotContents(i, stack);
                 player.inventoryContainer.detectAndSendChanges();

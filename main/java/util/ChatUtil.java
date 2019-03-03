@@ -7,6 +7,6 @@ public class ChatUtil
 {
     public static void msg(EntityPlayer player, String message)
     {
-        player.addChatMessage(new TextComponentString(message));
+        player.sendMessage(new TextComponentString(message));
     }    
 }
