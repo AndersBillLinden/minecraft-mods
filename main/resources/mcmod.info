@@ -1,10 +1,14 @@
 [
 {
+  "modid": "sethomemod",
+  "name": "Set home Mod",
+  "description": "This mod adds settable positions.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["AndersBillLinden"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
