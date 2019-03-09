@@ -1,4 +1,4 @@
-package Mod;
+package mod;
 
 import commands.HomeCommand;
 import commands.SetHomeCommand;
