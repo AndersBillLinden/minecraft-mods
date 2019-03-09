@@ -1,18 +1,16 @@
 package Mod;
 
+import commands.HomeCommand;
+import commands.SetHomeCommand;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import proxies.CommonProxy;
 
-import commands.SetHomeCommand;
-import commands.HomeCommand;
-
 @Mod.EventBusSubscriber(modid = SetHomeMod.modid)
-@Mod(modid = SetHomeMod.modid, version = SetHomeMod.version, name = "sethomemod")
+@Mod(modid = SetHomeMod.modid, version = SetHomeMod.version, name = SetHomeMod.modid)
 public class SetHomeMod
 {
     @SidedProxy(clientSide = "proxies.CommonProxy", serverSide = "proxies.CommonProxy")
@@ -25,12 +23,6 @@ public class SetHomeMod
     public void preinit(FMLPreInitializationEvent event)
     {
         proxy.preInit(event);
-    }
-
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-        proxy.init(event);
     }
     
     @EventHandler

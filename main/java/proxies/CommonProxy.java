@@ -6,7 +6,6 @@ import capabilities.SetHomePlayerStorage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @EventBusSubscriber
@@ -18,9 +17,5 @@ public class CommonProxy
                 new SetHomePlayerStorage.Factory());
 
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
-    }
-
-    public void init(FMLInitializationEvent e)
-    {
     }
 }

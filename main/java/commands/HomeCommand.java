@@ -70,13 +70,8 @@ public class HomeCommand implements ICommand
                 }
                 catch (LocationNotFoundException e)
                 {
-                    ChatUtil.msg(player, "No home with that name!");                    
+                    ChatUtil.msg(player, "No home with that name!");
                 }
-                
-                long time = world.getWorldTime();
-
-                world.setWorldTime((time + 12000L) % 24000L);
-                ChatUtil.msg(player, "Added 12 hours!");
             }
         }
     }
