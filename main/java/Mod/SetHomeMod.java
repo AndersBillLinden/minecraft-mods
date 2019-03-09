@@ -30,5 +30,5 @@ public class SetHomeMod
     {
         event.registerServerCommand(new SetHomeCommand());
         event.registerServerCommand(new HomeCommand());
-    }    
+    }
 }

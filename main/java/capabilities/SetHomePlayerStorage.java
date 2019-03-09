@@ -54,14 +54,5 @@ public class SetHomePlayerStorage implements IStorage<ISetHomePlayerLocations>
             
             instance.SetLocations(locations2);
         }
-    }
-    
-    public static class Factory implements Callable<ISetHomePlayerLocations>
-    {
-        @Override
-        public ISetHomePlayerLocations call() throws Exception
-        {
-            return new SetHomePlayerLocations();
-        }
     }    
 }

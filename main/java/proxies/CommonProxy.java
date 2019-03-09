@@ -2,6 +2,7 @@ package proxies;
 
 import capabilities.CapabilityHandler;
 import capabilities.ISetHomePlayerLocations;
+import capabilities.SetHomePlayerFactory;
 import capabilities.SetHomePlayerStorage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -14,7 +15,7 @@ public class CommonProxy
     public void preInit(FMLPreInitializationEvent e)
     {
         CapabilityManager.INSTANCE.register(ISetHomePlayerLocations.class, new SetHomePlayerStorage(),
-                new SetHomePlayerStorage.Factory());
+                new SetHomePlayerFactory());
 
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
     }
