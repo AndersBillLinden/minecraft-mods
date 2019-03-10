@@ -2,13 +2,16 @@ package capabilities;
 
 import java.util.ArrayList;
 
-import capabilities.SetHomePlayerLocations.LocationNotFoundException;
-import locations.Location;
+import capabilities.SetHomePlayerLocations.HomeNotFoundException;
+import capabilities.SetHomePlayerLocations.HomesNotFoundException;
+import locations.Home;
 
 public interface ISetHomePlayerLocations
 {
-    void SetLocation(String name, Location location);
-    Location GetLocation(String name) throws LocationNotFoundException;
-    ArrayList<Location> GetLocations();
-    void SetLocations(ArrayList<Location> locations);
+    void SetHome(Home location);
+    Home GetHome(String name) throws HomeNotFoundException;
+    ArrayList<Home> GetHomes();
+    int DelHome(String name) throws HomeNotFoundException;
+    int ClearHomes() throws HomesNotFoundException;
+    void SetLocations(ArrayList<Home> locations);
 }

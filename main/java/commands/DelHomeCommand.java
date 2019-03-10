@@ -5,18 +5,17 @@ import java.util.List;
 
 import capabilities.CapabilityProvider;
 import capabilities.ISetHomePlayerLocations;
-import locations.Home;
+import capabilities.SetHomePlayerLocations.HomeNotFoundException;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import util.ChatUtil;
 
-public class SetHomeCommand implements ICommand
+public class DelHomeCommand implements ICommand
 {
     @Override
     public int compareTo(ICommand arg0)
@@ -27,13 +26,13 @@ public class SetHomeCommand implements ICommand
     @Override
     public String getName()
     {
-        return "sethome";
+        return "delhome";
     }
 
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "sethome <home>";
+        return "delhome";
     }
 
     @Override
@@ -43,12 +42,6 @@ public class SetHomeCommand implements ICommand
     }
 
     @Override
-    public boolean isUsernameIndex(String[] args, int index)
-    {
-        return false;
-    }    
-    
-    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         World world = sender.getEntityWorld();
@@ -56,31 +49,26 @@ public class SetHomeCommand implements ICommand
         if (!world.isRemote)
         {
             Entity entity = sender.getCommandSenderEntity();
-                        
+            
             if (entity instanceof EntityPlayer)
             {
                 EntityPlayer player = (EntityPlayer)entity;
-                ISetHomePlayerLocations p = player.getCapability(CapabilityProvider.LOCATIONS_CAPABILITY, null);            
+        
+                ISetHomePlayerLocations p = player.getCapability(CapabilityProvider.LOCATIONS_CAPABILITY, null);
                 
-                if (args.length == 1)
+                try
                 {
-                    Vec3d position = player.getPositionVector();
-                            
-                    Home loc = new Home();
-                    loc.name = args[0];
-                    loc.X = position.x;
-                    loc.Y = position.y;
-                    loc.Z = position.z;
-                    
-                    loc.dimension = player.dimension;
-                    
-                    loc.yaw = player.rotationYaw;
-                    loc.pitch = player.rotationPitch;
-                    loc.yawhead = player.rotationYawHead;
-                    
-                    p.SetHome(loc);
-                    
-                    ChatUtil.msg(player, "Setting the home " + loc.name);
+                    if (args.length == 1)
+                    {
+                        String home = args[0];
+                        p.DelHome(home);
+
+                        ChatUtil.msg(player, "Deleting the home " + home);
+                    }
+                }
+                catch (HomeNotFoundException e)
+                {
+                    ChatUtil.msg(player, "No home with that name!");
                 }
             }
         }
@@ -97,4 +85,10 @@ public class SetHomeCommand implements ICommand
     {
         return null;
     }
+
+    @Override
+    public boolean isUsernameIndex(String[] args, int index)
+    {
+        return false;
+    }    
 }

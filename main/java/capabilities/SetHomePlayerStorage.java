@@ -1,11 +1,10 @@
 package capabilities;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
 import com.google.gson.Gson;
 
-import locations.Location;
+import locations.Home;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -14,18 +13,17 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 
 public class SetHomePlayerStorage implements IStorage<ISetHomePlayerLocations>
 {
-
     @Override
     public NBTBase writeNBT(Capability<ISetHomePlayerLocations> capability, ISetHomePlayerLocations instance,
             EnumFacing side)
     {
         NBTTagCompound tag = new NBTTagCompound();
         
-        ArrayList<Location> locations = instance.GetLocations();
+        ArrayList<Home> locations = instance.GetHomes();
         
         Gson gson = new Gson();
         
-        String str = gson.toJson(locations.toArray(new Location[0]));
+        String str = gson.toJson(locations.toArray(new Home[0]));
         
         tag.setString("locations", str);
         
@@ -43,13 +41,14 @@ public class SetHomePlayerStorage implements IStorage<ISetHomePlayerLocations>
             String str = tag.getString("locations");
             
             Gson gson = new Gson();
-            Location[] locations = gson.fromJson(str, Location[].class);
+            Home[] locations = str != null ? gson.fromJson(str, Home[].class) : new Home[0];
             
-            ArrayList<Location> locations2 = new ArrayList<Location>();
+            ArrayList<Home> locations2 = new ArrayList<Home>();
             
-            for(Location loc : locations)
+            for(Home loc : locations)
             {
-                locations2.add(loc);
+                if (loc.name != null)
+                    locations2.add(loc);
             }
             
             instance.SetLocations(locations2);

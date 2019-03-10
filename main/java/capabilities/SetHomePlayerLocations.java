@@ -2,21 +2,22 @@ package capabilities;
 
 import java.util.ArrayList;
 
-import locations.Location;
+import locations.Home;
 
 public class SetHomePlayerLocations implements ISetHomePlayerLocations
 {
-    private ArrayList<Location> locations = new ArrayList<Location>();
+    private ArrayList<Home> homes = new ArrayList<Home>();
     
-    public void SetLocation(String name, Location location)
+    public void SetHome(Home location)
     {
-        for (Location loc : locations)
+        for (Home loc : homes)
         {
-            if (loc.name.equals(name))
+            if (loc.name.equals(location.name))
             {
                 loc.X = location.X;
                 loc.Y = location.Y;
                 loc.Z = location.Z;
+                loc.dimension = location.dimension;
                 loc.yaw = location.yaw;
                 loc.yawhead = location.yawhead;
                 loc.pitch = location.pitch;
@@ -26,12 +27,12 @@ public class SetHomePlayerLocations implements ISetHomePlayerLocations
             }
         }
         
-        locations.add(location);
+        homes.add(location);
     }
     
-    public Location GetLocation(String name) throws LocationNotFoundException
+    public Home GetHome(String name) throws HomeNotFoundException
     {
-        for (Location loc : locations)
+        for (Home loc : homes)
         {
             if (loc.name.equals(name))
             {
@@ -39,21 +40,58 @@ public class SetHomePlayerLocations implements ISetHomePlayerLocations
             }
         }
         
-        throw new LocationNotFoundException();
+        throw new HomeNotFoundException();
+    }
+     
+    public int DelHome(String name) throws HomeNotFoundException
+    {
+        int num = 0;
+        ArrayList<Home> result = new ArrayList<Home>();
+        
+        for (Home home : homes)
+        {
+            if (!home.name.equals(name))
+                result.add(home);
+            else
+                num++;
+        }
+        
+        if (num == 0)
+            throw new HomeNotFoundException();
+        
+        homes = result;
+        
+        return num;
     }
         
-    public ArrayList<Location> GetLocations()
+    public ArrayList<Home> GetHomes()
     {
-        return locations;
+        return homes;
+    }
+
+    public int ClearHomes() throws HomesNotFoundException
+    {
+        int num = homes.size(); 
+        if (num == 0)
+            throw new HomesNotFoundException();
+        
+        homes = new ArrayList<Home>();
+        
+        return num;
     }
     
-    public void SetLocations(ArrayList<Location> locations)
+    public void SetLocations(ArrayList<Home> locations)
     {
-        this.locations = locations;
+        this.homes = locations;
     }
     
     @SuppressWarnings("serial")
-    public class LocationNotFoundException extends Exception
+    public class HomeNotFoundException extends Exception
     {
-    }    
+    }
+    
+    @SuppressWarnings("serial")
+    public class HomesNotFoundException extends Exception
+    {
+    }        
 }

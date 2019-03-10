@@ -1,8 +1,9 @@
 package locations;
 
-public class Location
+public class Home
 {
     public String name;
+    public int dimension;
     public double X;
     public double Y;
     public double Z;

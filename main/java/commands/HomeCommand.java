@@ -5,8 +5,8 @@ import java.util.List;
 
 import capabilities.CapabilityProvider;
 import capabilities.ISetHomePlayerLocations;
-import capabilities.SetHomePlayerLocations.LocationNotFoundException;
-import locations.Location;
+import capabilities.SetHomePlayerLocations.HomeNotFoundException;
+import locations.Home;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -62,13 +62,22 @@ public class HomeCommand implements ICommand
                     if (args.length == 1)
                     {
                         String home = args[0];
-                        Location loc = p.GetLocation(home);
+                        Home loc = p.GetHome(home);
                         
-                        player.setPositionAndRotation(loc.X, loc.Y, loc.Z, loc.yaw, loc.pitch);
-                        player.setRotationYawHead(loc.yawhead);
+                        if (player.dimension != loc.dimension)
+                            ChatUtil.msg(player, "Cannot teleport to another dimension");
+                        else
+                        {
+                            player.rotationPitch = loc.pitch;
+                            player.rotationYaw = loc.yaw;
+                            player.setRotationYawHead(loc.yawhead);                        
+                            player.setPositionAndUpdate(loc.X, loc.Y, loc.Z);
+                            
+                            ChatUtil.msg(player, "Teleporting to the home " + loc.name);
+                        }
                     }
                 }
-                catch (LocationNotFoundException e)
+                catch (HomeNotFoundException e)
                 {
                     ChatUtil.msg(player, "No home with that name!");
                 }

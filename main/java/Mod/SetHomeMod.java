@@ -1,15 +1,19 @@
 package mod;
 
+import commands.ClearHomesCommand;
+import commands.DelHomeCommand;
 import commands.HomeCommand;
+import commands.HomesCommand;
 import commands.SetHomeCommand;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import proxies.CommonProxy;
 
-@Mod.EventBusSubscriber(modid = SetHomeMod.modid)
+@EventBusSubscriber(modid = SetHomeMod.modid)
 @Mod(modid = SetHomeMod.modid, version = SetHomeMod.version, name = SetHomeMod.modid)
 public class SetHomeMod
 {
@@ -28,7 +32,10 @@ public class SetHomeMod
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event)
     {
-        event.registerServerCommand(new SetHomeCommand());
+        event.registerServerCommand(new ClearHomesCommand());
+        event.registerServerCommand(new DelHomeCommand());
         event.registerServerCommand(new HomeCommand());
+        event.registerServerCommand(new HomesCommand());
+        event.registerServerCommand(new SetHomeCommand());
     }
 }
