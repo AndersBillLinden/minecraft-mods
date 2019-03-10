@@ -1,4 +1,4 @@
-package mod;
+package Mod;
 
 import commands.ClearHomesCommand;
 import commands.DelHomeCommand;
