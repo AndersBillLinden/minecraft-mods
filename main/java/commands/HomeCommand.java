@@ -94,7 +94,33 @@ public class HomeCommand implements ICommand
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, net.minecraft.util.math.BlockPos targetPos)
     {
-        return null;
+        ArrayList<String> suggestions = new ArrayList<String>();
+        
+        if (args.length > 0)
+        {
+            String homestart = args[0];
+            World world = sender.getEntityWorld();
+            if (!world.isRemote)
+            {
+                Entity entity = sender.getCommandSenderEntity();
+                
+                if (entity instanceof EntityPlayer)
+                {
+                    EntityPlayer player = (EntityPlayer)entity;
+                    ISetHomePlayerLocations p = player.getCapability(CapabilityProvider.LOCATIONS_CAPABILITY, null);
+                    
+                    for (Home home: p.GetHomes())
+                    {
+                        if (home.dimension == player.dimension && home.name.startsWith(homestart))
+                        {
+                            suggestions.add(home.name);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return suggestions;
     }
 
     @Override
