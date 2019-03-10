@@ -1,43 +1,41 @@
 package Mod;
 
-import items.UpperCutter;
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import proxies.CommonProxy;
-
 import commands.UpperCutterCommand;
+import items.UpperCutter;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@Mod.EventBusSubscriber(modid = UpperCutterMod.modid)
 @Mod(modid = UpperCutterMod.modid, version = UpperCutterMod.version, name = "UpperCutterMod")
 public class UpperCutterMod
 {
-    public static Item upperCutter;
+    public static Item upperCutter = new UpperCutter();
     
-    @SidedProxy(clientSide = "proxies.ClientProxy", serverSide = "proxies.ServerProxy")
-    public static CommonProxy proxy;
-
     public static final String modid = "uppercuttermod";
     public static final String version = "1.0.0";
 
-    @Mod.EventHandler
-    public void preinit(FMLPreInitializationEvent event)
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        GameRegistry.registerItem(upperCutter = new UpperCutter(), UpperCutter.NAME);
-
-        proxy.preInit(event);
-    }
-
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-        proxy.init(event);
+        event.getRegistry().registerAll(upperCutter);
     }
     
-    @Mod.EventHandler
+    @SubscribeEvent
+    public static void registerModels(ModelRegistryEvent event)
+    {
+        Item item = upperCutter;
+        ModelLoader.setCustomModelResourceLocation(item, 0,
+                new ModelResourceLocation(item.getRegistryName(), "inventory"));
+    }     
+
+    @EventHandler
     public void serverLoad(FMLServerStartingEvent event)
     {
         event.registerServerCommand(new UpperCutterCommand());
