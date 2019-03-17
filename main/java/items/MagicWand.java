@@ -65,7 +65,7 @@ public class MagicWand extends Item
                     if (p.isStraightLine(1, 2, 3))
                     {
                         // 4 3 2
-                        // 1
+                        //     1
 
                         try
                         {
@@ -108,9 +108,9 @@ public class MagicWand extends Item
                     }
                     else if (p.isStraightLine(0, 1, 3))
                     {
-                        // 4
+                        //   4
                         // 3 2
-                        // 1
+                        //   1
 
                         try
                         {
@@ -179,7 +179,7 @@ public class MagicWand extends Item
                         try
                         {
                             addStackToInventory(new ItemStack(Blocks.COBBLESTONE, 64), player);
-                            msg(player, "Added stack of cobble stone to inventory");
+                            msg(player, "Added stack of cobblestone to inventory");
                             completedSpell = true;
                         }
                         catch (InventoryFullException e)
@@ -190,7 +190,7 @@ public class MagicWand extends Item
                     }
                     else if (p.isLeftBend(1, 2, 3))
                     {
-                        // 4
+                        //   4
                         // 2 3
                         // 1
 
@@ -235,13 +235,11 @@ public class MagicWand extends Item
                     else if (p.isLeftBend(0, 1, 3))
                     {
                         // 4 2 3
-                        // 1
+                        //   1
 
                         InventoryPlayer inv = player.inventory;
 
                         int size = inv.getSizeInventory();
-
-                        msg(player, "inventory size: " + size);
 
                         int num = 0;
                         for (int i = 0; i < size; i++)
@@ -326,9 +324,9 @@ public class MagicWand extends Item
                 {
                     if (p.isHalfLeftBend(0, 1, 3))
                     {
-                        // 4   3
-                        //   2
-                        //   1
+                        // 4 3
+                        //  2
+                        //  1
 
                         spawnSheep(pos.up(), world);
                         msg(player, "Spawned sheep");
@@ -396,8 +394,8 @@ public class MagicWand extends Item
                     else if (p.isLeftBend(1, 2, 3))
                     {
                         // 4 3
-                        // 2
-                        // 1
+                        //   2
+                        //   1
 
                         try
                         {
@@ -453,7 +451,7 @@ public class MagicWand extends Item
                 {
                     if (p.isDoubleRightBend(0, 1, 3))
                     {
-                        // 2
+                        //   2
                         // 3 1 4
 
                         try
@@ -470,6 +468,9 @@ public class MagicWand extends Item
                     }
                     else if (p.isLeftBend(0, 1, 3))
                     {
+                        // 4 2
+                        // 3 1
+                        
                         if (world.provider.getDimension() != 0)
                         {
                             msg(player, "Spell must be performed in overworld!");
@@ -495,7 +496,7 @@ public class MagicWand extends Item
                     }
                     else if (p.isStraightLine(0, 2, 3))
                     {
-                        // 2
+                        //     2
                         // 4 3 1
 
                         try
@@ -532,7 +533,7 @@ public class MagicWand extends Item
                     }
                     else if (p.isDoubleLeftBend(0, 1, 3))
                     {
-                        // 2
+                        //   2
                         // 4 1 3
 
                         try
@@ -577,9 +578,9 @@ public class MagicWand extends Item
                     }
                     else if (p.isLeftBend(2, 0, 3))
                     {
-                        // 2
-                        // 1 4
-                        // 3
+                        //   2
+                        // 4 1 
+                        //   3
 
                         try
                         {
@@ -595,8 +596,8 @@ public class MagicWand extends Item
                     }
                     else if (p.isLeftBend(3, 2, 0))
                     {
-                        // 2
-                        // 1
+                        //   2
+                        //   1
                         // 4 3
 
                         /* invisibility */
@@ -628,8 +629,8 @@ public class MagicWand extends Item
                     else if (p.isLeftBend(0, 1, 3))
                     {
                         // 4 2
-                        // 1
-                        // 3
+                        //   1
+                        //   3
 
                         try
                         {
