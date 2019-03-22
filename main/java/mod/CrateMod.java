@@ -27,19 +27,35 @@ public class CrateMod
 {
     public static final String MODID = "cratemod";
     public static final String VERSION = "1.0";
-
-    public static Block blockCrate;
-    public static Item itemCrate;
     
     @SidedProxy(clientSide = "proxies.CommonProxy", serverSide = "proxies.CommonProxy")
     public static CommonProxy proxy;
+        
+    public static Item itemCrate = null;
+    private static Item getItemCrate()
+    {
+        if (itemCrate == null)
+        {
+            itemCrate = new ItemBlock(getBlockCrate());
+            itemCrate.setRegistryName("crate").setUnlocalizedName("crate");
+            itemCrate.setMaxStackSize(64);
+        }
+        
+        return itemCrate;
+    }
+    
+    public static Block blockCrate = null;
+    private static Block getBlockCrate()
+    {
+        if (blockCrate == null)
+            blockCrate = new BlockCrate();
+        
+        return blockCrate;
+    }
     
     @EventHandler
     public void preinit(FMLPreInitializationEvent event)
     {
-        blockCrate = new BlockCrate().setRegistryName("crate").setUnlocalizedName("crate");
-        itemCrate = new ItemBlock(blockCrate).setRegistryName("crate").setUnlocalizedName("crate");
-        
         proxy.preInit(event);
     }    
     
@@ -55,34 +71,32 @@ public class CrateMod
         GameRegistry.addShapedRecipe(new ResourceLocation(BlockCrate.NAME),
             new ResourceLocation(MODID), new ItemStack(blockCrate), new Object[]
             {
-                    "###",
-                    "###",
-                    "###",
-                    '#', Blocks.PLANKS                               
+                "###",
+                "###",
+                "###",
+                '#', Blocks.PLANKS
             });
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {        
-        event.getRegistry().registerAll(itemCrate);
+        event.getRegistry().register(getItemCrate());
     }
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().registerAll(blockCrate);
+        event.getRegistry().register(getBlockCrate());
     }
     
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event)
     {
-        registerModel(itemCrate);
-    }
+        Item item = getItemCrate();
         
-    static void registerModel(Item item)
-    {
         ModelLoader.setCustomModelResourceLocation(item, 0,
                 new ModelResourceLocation(item.getRegistryName(), "inventory"));
-    }    
+        
+    }        
 }
