@@ -1,4 +1,6 @@
-{   "parent": "block/cube_all",
+{
+	"parent": "block/cube_bottom_top",
+    "ambientocclusion": false,
     "textures": {
         "bottom": "cratemod:blocks/crate_bottom",
         "top": "cratemod:blocks/crate_top",
