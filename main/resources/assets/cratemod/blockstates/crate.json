@@ -1,5 +1,5 @@
 {
     "variants": {
-        "normal": { "model": "crate" }
+        "normal": { "model": "cratemod:crate" }
     }
 }

@@ -12,7 +12,6 @@ public class BlockCrate extends Block
     public BlockCrate()
     {
         super(Material.GROUND);
-        this.setRegistryName(NAME);
         this.setUnlocalizedName(NAME);
         this.setCreativeTab(CreativeTabs.DECORATIONS);
     }
