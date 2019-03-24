@@ -1,0 +1,19 @@
+{
+    "display": {
+        "title": {
+            "text": "Crate mod advancements"
+        },
+        "description": {
+            "text": ""
+        },
+        "icon": {
+            "item": "cratemod:crate"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false,
+        "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+    },
+    "criteria": {}
+}
