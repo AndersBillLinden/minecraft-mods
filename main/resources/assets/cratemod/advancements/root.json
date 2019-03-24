@@ -1,19 +1,22 @@
 {
     "display": {
-        "title": {
-            "text": "Crate mod advancements"
-        },
-        "description": {
-            "text": ""
-        },
-        "icon": {
-            "item": "cratemod:crate"
-        },
-        "frame": "task",
+    	"background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+        "icon": { "item": "cratemod:crate" },
+        "title": "Crate builder",
+        "description": "Craft nine planks",
         "show_toast": true,
-        "announce_to_chat": true,
-        "hidden": false,
-        "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+        "announce_to_chat": true
     },
-    "criteria": {}
+    "criteria": {
+        "crate": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "cratemod:crate"
+                    }
+                ]
+            }
+        }
+    }
 }
